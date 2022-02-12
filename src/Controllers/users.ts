@@ -1,6 +1,6 @@
 import { userModel, User } from '../Models/users'
 import express, { Request, Response } from 'express'
-
+import auth from '../middleware/auth';
 const userRouter = express.Router();
 
 
@@ -12,8 +12,7 @@ const register = async (req: Request, res: Response) => {
 
     const user: User = { ...req.body } as User
     const isDublicated : boolean = await userModeler.CheckUsername(user.username)
-    console.log(isDublicated)
-    if (isDublicated == true){
+    if (isDublicated == false){
     // Stage 1 => Check if username exist 
         return res.json('Username is exist')
     } 
@@ -34,5 +33,8 @@ const login = async (req: Request, res: Response) => {
 
 userRouter.post('/user/register', register)
 userRouter.post('/user/login', login)
+userRouter.get('/user/login',auth, (req,res)=>{
+    res.json('hello')
+})
 
 export default userRouter

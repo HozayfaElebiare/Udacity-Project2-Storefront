@@ -1,7 +1,7 @@
 import client from "../Services/database";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv'
-// import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 dotenv.config()
 
 export type User = {
@@ -11,6 +11,8 @@ export type User = {
   userpassword: string;
   token?: string;
 }
+const SaltKey = process.env.PasswodSalt
+const SaltRounds: number = parseInt(process.env.SaltRounds as string)
 
 export class userModel {
 
@@ -18,32 +20,40 @@ export class userModel {
     try {
       const sql = 'INSERT INTO users (userfullname, username, userpassword) VALUES($1, $2, $3) RETURNING *'
       // @ts-ignore
+      const hashpassword = bcrypt.hashSync(user.userpassword, SaltRounds)
       const conn = await client.connect()
       const result = await conn
-        .query(sql, [user.userfullname, user.username, user.userpassword])
+        .query(sql, [user.userfullname, user.username, hashpassword])
       const addedUser = result.rows[0]
       conn.release()
 
       return addedUser
     } catch (err) {
-      throw new Error(`Could not add new book ${user.userfullname}. Error: ${err}`)
+      throw new Error(`Could not add new User ${user.userfullname}. Error: ${err}`)
     }
   }
 
 
   public async Login(user: User): Promise<string> {
     try {
-      const sql = 'select * from users where username= $1 and userpassword= $2'
+      const sql = 'select * from users where username= $1'
       // @ts-ignore
       const conn = await client.connect()
-      const result = await conn
-        .query(sql, [user.username, user.userpassword])
-      const addedUser = result.rows[0]
+      const result = await conn.query(sql, [user.username])
+      const SelectedUser = result.rows[0]
       conn.release()
-      const token = jwt.sign(addedUser, process.env.SecretKey as string)
-      return token;
+      const same =  bcrypt.compareSync(user.userpassword, SelectedUser.userpassword )
+      if (same == true) {
+        console.log('true')
+        const token = jwt.sign(SelectedUser, process.env.SecretKey as string)
+        return token;
+      } else {
+        console.log('false')
+        return 'Authintication faild, no users exist'
+      }
+      // return 'Authintication faild, no users exist'
     } catch (err) {
-      return 'Authintication faild, no users exist'
+      return 'Error Authintication faild, no users exist' + err
     }
 
   }
@@ -55,9 +65,8 @@ export class userModel {
       const sql = 'select * from users where username= $1'
       // @ts-ignore
       const conn = await client.connect()
-      const result = await conn.query(sql, username)
+      const result = await conn.query(sql, [username])
       const exist = result.rows.length
-      console.log(result.rows)
       conn.release()
       if (exist == 0) {
         return true;
