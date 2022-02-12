@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import client from './Services/database'
-
+import userRouter from './Controllers/users'
 
 const app: express.Application = express()
 const address: string = "http://localhost:3000"
@@ -13,9 +13,10 @@ const corsOptions ={
 
 app.use(cors(corsOptions))
 app.use(bodyParser.json())
+app.use(userRouter)
 
 app.get('/', function (req: Request, res: Response) {
-    res.send('client')
+    res.send('Hi')
 })
 
 app.listen(3000, function () {
