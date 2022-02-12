@@ -1,1 +1,0 @@
-CREATE TABLE hozayfa (id serial primary key, namer varchar(50))

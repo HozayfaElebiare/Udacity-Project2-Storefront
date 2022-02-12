@@ -1,16 +1,13 @@
 import client from "../Services/database";
 
-export type Book = {
+export type Product = {
      id?: number;
-     title: string;
-     author: string;
-     total_pages: number;
-     summary: string;
-     typeers:String
+     productname: string;
+     productprice: number;
 }
 
-export class BookStore {
-  async index(): Promise<Book[]> {
+export class ProductModel {
+  async index(): Promise<Product[]> {
     try {
       // @ts-ignore
       const conn = await client.connect()
@@ -26,7 +23,7 @@ export class BookStore {
     }
   }
 
-  async show(id: string): Promise<Book> {
+  async show(id: string): Promise<Product> {
     try {
     const sql = 'SELECT * FROM books WHERE id=($1)'
     // @ts-ignore
@@ -42,14 +39,14 @@ export class BookStore {
     }
   }
 
-  async create(b: Book): Promise<Book> {
+  async create(b: Product): Promise<Product> {
       try {
     const sql = 'INSERT INTO books (title, author, total_pages, summary, typeers) VALUES($1, $2, $3, $4, $5) RETURNING *'
     // @ts-ignore
     const conn = await client.connect()
 
     const result = await conn
-        .query(sql, [b.title, b.author, b.total_pages, b.summary, b.typeers])
+        .query(sql, [b.productname, b.productprice])
 
     const book = result.rows[0]
 
@@ -57,11 +54,11 @@ export class BookStore {
 
     return book
       } catch (err) {
-          throw new Error(`Could not add new book ${b.title}. Error: ${err}`)
+          throw new Error(`Could not add new book ${b.productname}. Error: ${err}`)
       }
   }
 
-  async delete(id: string): Promise<Book> {
+  async delete(id: string): Promise<Product> {
       try {
     const sql = 'DELETE FROM books WHERE id=($1)'
     // @ts-ignore
