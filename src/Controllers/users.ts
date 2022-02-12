@@ -27,8 +27,17 @@ const register = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
     const user: User = { ...req.body } as User
-    const returner = await userModeler.Login(user)
-    res.json(returner)
+    var returner = await userModeler.Login(user)
+    if(returner[0]=== "true"){
+        res.status(200).json({
+            Status: true,
+            Token: returner[1],
+            UserID: returner[2],
+            Note: returner[3]
+        })
+    }else{
+        res.status(401).json(returner)
+    }
 }
 
 userRouter.post('/user/register', register)

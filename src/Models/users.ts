@@ -34,7 +34,7 @@ export class userModel {
   }
 
 
-  public async Login(user: User): Promise<string> {
+  public async Login(user: User): Promise<string[]> {
     try {
       const sql = 'select * from users where username= $1'
       // @ts-ignore
@@ -46,14 +46,14 @@ export class userModel {
       if (same == true) {
         console.log('true')
         const token = jwt.sign(SelectedUser, process.env.SecretKey as string)
-        return token;
+        return ["true",token,SelectedUser.id,"Fro successfull response Please add token to req.headers.authorization and add User.ID to req.headers.id per each upcoming requests."];
       } else {
         console.log('false')
-        return 'Authintication faild, no users exist'
+        return ['Authintication faild, no users exist']
       }
       // return 'Authintication faild, no users exist'
     } catch (err) {
-      return 'Error Authintication faild, no users exist' + err
+      return ['Error Authintication faild, no users exist' + err]
     }
 
   }

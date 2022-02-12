@@ -11,7 +11,7 @@ export class ProductModel {
     try {
       // @ts-ignore
       const conn = await client.connect()
-      const sql = 'SELECT * FROM books'
+      const sql = 'SELECT * FROM products'
 
       const result = await conn.query(sql)
 
@@ -19,13 +19,13 @@ export class ProductModel {
 
       return result.rows 
     } catch (err) {
-      throw new Error(`Could not get books. Error: ${err}`)
+      throw new Error(`Could not get products. Error: ${err}`)
     }
   }
 
   async show(id: string): Promise<Product> {
     try {
-    const sql = 'SELECT * FROM books WHERE id=($1)'
+    const sql = 'SELECT * FROM products WHERE id=($1)'
     // @ts-ignore
     const conn = await client.connect()
 
@@ -35,44 +35,63 @@ export class ProductModel {
 
     return result.rows[0]
     } catch (err) {
-        throw new Error(`Could not find book ${id}. Error: ${err}`)
+        throw new Error(`Could not find product ${id}. Error: ${err}`)
     }
   }
 
   async create(b: Product): Promise<Product> {
       try {
-    const sql = 'INSERT INTO books (title, author, total_pages, summary, typeers) VALUES($1, $2, $3, $4, $5) RETURNING *'
+    const sql = 'INSERT INTO products (productname, productprice) VALUES($1, $2) RETURNING *'
     // @ts-ignore
     const conn = await client.connect()
 
-    const result = await conn
-        .query(sql, [b.productname, b.productprice])
+    const result = await conn.query(sql, [b.productname, b.productprice])
 
-    const book = result.rows[0]
+    const product = result.rows[0]
 
     conn.release()
 
-    return book
+    return product
       } catch (err) {
-          throw new Error(`Could not add new book ${b.productname}. Error: ${err}`)
+          throw new Error(`Could not add new product ${b.productname}. Error: ${err}`)
       }
   }
 
   async delete(id: string): Promise<Product> {
       try {
-    const sql = 'DELETE FROM books WHERE id=($1)'
+    const sql = 'DELETE FROM products WHERE id=($1)'
     // @ts-ignore
     const conn = await client.connect()
 
     const result = await conn.query(sql, [id])
 
-    const book = result.rows[0]
+    const product = result.rows[0]
 
     conn.release()
 
-    return book
+    return product
       } catch (err) {
-          throw new Error(`Could not delete book ${id}. Error: ${err}`)
+          throw new Error(`Could not delete product ${id}. Error: ${err}`)
       }
   }
+
+
+  async update(b: Product): Promise<Product> {
+    try {
+  const sql = 'UPDATE products SET productname =$1 , productprice = $2  WHERE id = $3 RETURNING *'
+  // @ts-ignore
+  const conn = await client.connect()
+
+  const result = await conn.query(sql, [b.productname, b.productprice,b.id])
+
+  const product = result.rows[0]
+
+  conn.release()
+
+  return product
+    } catch (err) {
+        throw new Error(`Could not add new product ${b.productname}. Error: ${err}`)
+    }
+}
+
 }
