@@ -1,81 +1,183 @@
 import client from "../Services/database";
 
-export type Book = {
-     id?: number;
-     title: string;
-     author: string;
-     total_pages: number;
-     summary: string;
-     typeers:String
+export type Product = {
+  id?: number;
+  productname: string;
+  productprice: number;
 }
 
-export class BookStore {
-  async index(): Promise<Book[]> {
+export type Order = {
+  id?: number;
+  orderstatus: string;
+  userid: number;
+}
+
+export type OrderProducts = {
+  id?:number;
+  quantity:number;
+  orderid:number;
+  productid:number;
+}
+
+export class OrderModel {
+  async GetOpenOrder(userid: number): Promise<Order> {
     try {
       // @ts-ignore
       const conn = await client.connect()
-      const sql = 'SELECT * FROM books'
+      const sql = 'SELECT * FROM orders WHERE  userid= $1 and orderstatus= \'open\''
 
-      const result = await conn.query(sql)
+      const result = await conn.query(sql, [userid])
 
       conn.release()
 
-      return result.rows 
+      return result.rows[0]
     } catch (err) {
-      throw new Error(`Could not get books. Error: ${err}`)
+      throw new Error(`Could not get Orders. Error: ${err}`)
     }
   }
 
-  async show(id: string): Promise<Book> {
+  public async CheckIfOpenOrderExist(userid: number): Promise<boolean> {
     try {
-    const sql = 'SELECT * FROM books WHERE id=($1)'
-    // @ts-ignore
-    const conn = await client.connect()
+      const sql = 'select * from orders where userid= $1 and orderstatus= \'open\''
+      // @ts-ignore
+      const conn = await client.connect()
+      const result = await conn.query(sql, [userid])
+      const exist = result.rows.length
+      conn.release()
+      if (exist == 0) {
+        return true;
+      } else {
+        return false;
 
-    const result = await conn.query(sql, [id])
-
-    conn.release()
-
-    return result.rows[0]
+      }
     } catch (err) {
-        throw new Error(`Could not find book ${id}. Error: ${err}`)
+      return false
     }
   }
 
-  async create(b: Book): Promise<Book> {
-      try {
-    const sql = 'INSERT INTO books (title, author, total_pages, summary, typeers) VALUES($1, $2, $3, $4, $5) RETURNING *'
-    // @ts-ignore
-    const conn = await client.connect()
+  async create(b: Order): Promise<Order> {
+    try {
+      console.log(b)
 
-    const result = await conn
-        .query(sql, [b.title, b.author, b.total_pages, b.summary, b.typeers])
+      b.orderstatus = 'open';
+      const sql = 'INSERT INTO orders (orderstatus, userid) VALUES( $1, $2) RETURNING *'
+      // @ts-ignore
+      const conn = await client.connect()
 
-    const book = result.rows[0]
+      const result = await conn.query(sql, [b.orderstatus, b.userid])
+ 
+      const product = result.rows[0]
 
-    conn.release()
+      conn.release()
 
-    return book
-      } catch (err) {
-          throw new Error(`Could not add new book ${b.title}. Error: ${err}`)
-      }
+      return product
+    } catch (err) {
+      throw new Error(`Could not add new order fro userid ${b.userid}. Error: ${err}`)
+    }
   }
 
-  async delete(id: string): Promise<Book> {
-      try {
-    const sql = 'DELETE FROM books WHERE id=($1)'
-    // @ts-ignore
-    const conn = await client.connect()
+  async showAll(userid: number): Promise<Order[]> {
+    try {
+      const sql = 'SELECT * FROM orders WHERE userid=($1)'
+      // @ts-ignore
+      const conn = await client.connect()
 
-    const result = await conn.query(sql, [id])
+      const result = await conn.query(sql, [userid])
 
-    const book = result.rows[0]
+      conn.release()
 
-    conn.release()
-
-    return book
-      } catch (err) {
-          throw new Error(`Could not delete book ${id}. Error: ${err}`)
-      }
+      return result.rows
+    } catch (err) {
+      throw new Error(`Could not find Orders ${userid}. Error: ${err}`)
+    }
   }
+
+  async addToCurrntOrder(orderProducts: OrderProducts): Promise<OrderProducts> {
+    try { 
+      const sql = 'INSERT INTO orderitems (quantity, orderid, productid) VALUES( $1, $2, $3) RETURNING *'
+      // @ts-ignore
+      const conn = await client.connect()
+
+      const result = await conn.query(sql, [orderProducts.quantity, orderProducts.orderid, orderProducts.productid])
+
+      conn.release()
+
+      return result.rows[0]
+    } catch (err) {
+      throw new Error(`Could not add to Order ${orderProducts.orderid}. Error: ${err}`)
+    }
+  }
+
+  async showOrderDetails(orderid: number): Promise<OrderProducts[]> {
+    try {
+
+      const sql = 'SELECT * FROM products INNER JOIN orderitems ON products.id = orderitems.productid WHERE orderitems.orderid=($1)'
+      // @ts-ignore
+      const conn = await client.connect()
+
+      const result = await conn.query(sql, [orderid])
+
+      conn.release()
+
+      return result.rows
+    } catch (err) {
+      throw new Error(`Could not find Orders ${orderid}. Error: ${err}`)
+    }
+  }
+
+  async ChaneOrderFromOpenToSubmit(orderid: number): Promise<Product> {
+    try {
+      const sql = 'UPDATE Orders SET orderstatus =\'Submited\'  WHERE id = $1 RETURNING *'
+      // @ts-ignore
+      const conn = await client.connect()
+
+      const result = await conn.query(sql, [orderid])
+
+      const product = result.rows[0]
+
+      conn.release()
+
+      return product
+    } catch (err) {
+      throw new Error(`Could not close current open order ${orderid}. Error: ${err}`)
+    }
+  }
+
+  async delete(id: string): Promise<Product> {
+    try {
+      const sql = 'DELETE FROM products WHERE id=($1)'
+      // @ts-ignore
+      const conn = await client.connect()
+
+      const result = await conn.query(sql, [id])
+
+      const product = result.rows[0]
+
+      conn.release()
+
+      return product
+    } catch (err) {
+      throw new Error(`Could not delete product ${id}. Error: ${err}`)
+    }
+  }
+
+
+  async update(b: Product): Promise<Product> {
+    try {
+      const sql = 'UPDATE products SET productname =$1 , productprice = $2  WHERE id = $3 RETURNING *'
+      // @ts-ignore
+      const conn = await client.connect()
+
+      const result = await conn.query(sql, [b.productname, b.productprice, b.id])
+
+      const product = result.rows[0]
+
+      conn.release()
+
+      return product
+    } catch (err) {
+      throw new Error(`Could not add new product ${b.productname}. Error: ${err}`)
+    }
+  }
+
 }
