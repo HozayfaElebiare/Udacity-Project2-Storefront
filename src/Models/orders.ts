@@ -36,7 +36,7 @@ export class OrderModel {
     }
   }
 
-  public async CheckIfOpenOrderExist(userid: number): Promise<boolean> {
+  async CheckIfOpenOrderExist(userid: number): Promise<boolean> {
     try {
       const sql = 'select * from orders where userid= $1 and orderstatus= \'open\''
       // @ts-ignore
@@ -143,41 +143,6 @@ export class OrderModel {
     }
   }
 
-  async delete(id: string): Promise<Product> {
-    try {
-      const sql = 'DELETE FROM products WHERE id=($1)'
-      // @ts-ignore
-      const conn = await client.connect()
-
-      const result = await conn.query(sql, [id])
-
-      const product = result.rows[0]
-
-      conn.release()
-
-      return product
-    } catch (err) {
-      throw new Error(`Could not delete product ${id}. Error: ${err}`)
-    }
-  }
-
-
-  async update(b: Product): Promise<Product> {
-    try {
-      const sql = 'UPDATE products SET productname =$1 , productprice = $2  WHERE id = $3 RETURNING *'
-      // @ts-ignore
-      const conn = await client.connect()
-
-      const result = await conn.query(sql, [b.productname, b.productprice, b.id])
-
-      const product = result.rows[0]
-
-      conn.release()
-
-      return product
-    } catch (err) {
-      throw new Error(`Could not add new product ${b.productname}. Error: ${err}`)
-    }
-  }
+  
 
 }

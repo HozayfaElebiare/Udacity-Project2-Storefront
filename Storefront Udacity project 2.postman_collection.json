@@ -1,67 +1,3 @@
-# API integration guide
-
- ## Note: Postman collection included 
----------
-
-## API Endpoints
-
-#### Users
-- Register `/user/register` [POST] 
-- Login `/user/login` [POST] 
-
-
-#### Products
-- Index `/product` [GET] 
-- Create `/product/create` [POST] [token required]
-- Read `/product/:id` [GET] 
-- Update `/product/:id` [PUT] [token required]
-- Delete `/product/:id` [DELETE] [token required]
-
-
-#### Orders
-- Create New Order `/order/new` [POST] [open cart if no open exist][token required]
-- Get My Orders `/showmyorders/` [GET] [token required]
-- Add To Current Order `/order/:orderid/addproduct/:productid` [POST] [token required]
-- Submit Current opened Order `/supmitorder/:id` [POST] [token required]
-- Get Order Details `/orderdetails/:id` [GET] [token required]
-
-
-
----------------------------
-
-
-## Data Shapes
-#### Product
-Table: *products*
-- id `SERIAL PRIMARY KEY`
-- productname `VARCHAR`
-- productprice `INTEGER`
-
-#### User
-Table: *users*
-- id `SERIAL PRIMARY KEY`
-- username `VARCHAR`
-- userfullname `VARCHAR`
-- userpassword `VARCHAR`
-
-#### Orders
-Table: *orders*
-- id `SERIAL PRIMARY KEY`
-- user_id `INTEGER` `REFERENCES users(id)`
-- status `STRING` [Open,Submited]
-
-Table: *order_products*
-- orderid `INTEGER` `REFERENCES orders(id)` 
-- productid `INTEGER` `REFERENCES products(id)`
-- quantity `INTEGER`
-
-----
-###  postman Collection link
-https://www.getpostman.com/collections/41553240e89532125841
-
---------
-```
-
 {
 	"info": {
 		"_postman_id": "3753a254-85bd-442d-b986-fb42ec1fffdd",
@@ -629,4 +565,3 @@ https://www.getpostman.com/collections/41553240e89532125841
 		}
 	]
 }
-```

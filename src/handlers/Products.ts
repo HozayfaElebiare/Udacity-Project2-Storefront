@@ -29,8 +29,8 @@ const Update = async (req: Request, res: Response) => {
 }
  
 
-productRouter.get('/product',auth, GetAll)
-productRouter.get('/product/:id',auth, GetOne)
+productRouter.get('/product', GetAll)
+productRouter.get('/product/:id', GetOne)
 productRouter.post('/product',auth, Create)
 productRouter.delete('/product/:id',auth, Delete)
 productRouter.put('/product/:id',auth, Update)
