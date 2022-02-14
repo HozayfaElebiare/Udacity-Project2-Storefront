@@ -47,14 +47,46 @@ Table: *users*
 #### Orders
 Table: *orders*
 - id `SERIAL PRIMARY KEY`
-- user_id `INTEGER` `REFERENCES users(id)`
+- userid `INTEGER` `REFERENCES users(id)`
 - status `STRING` [Open,Submited]
 
-Table: *order_products*
+Table: *orderitems*
 - orderid `INTEGER` `REFERENCES orders(id)` 
 - productid `INTEGER` `REFERENCES products(id)`
 - quantity `INTEGER`
 
+
+
+--------
+
+## Database Schema
+
+
+#### User
+
+    id VARCHAR(100) PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    userfullname VARCHAR(100),
+    userpassword VARCHAR(200)
+#### Product
+
+    id SERIAL PRIMARY KEY,
+    productname VARCHAR(100) NOT NULL,
+    productprice INT NOT NULL,
+
+
+#### Order
+
+    id SERIAL PRIMARY KEY,
+    userid VARCHAR(100) REFERENCES users(id),
+    status VARCHAR(10),
+
+    Order Items is one-to-many relationship with the orders and products table. This table will be used to add multiple products in one order. This will hold orderId from orders table and productId from products table. The order_products table will have below schema.
+
+    id SERIAL PRIMARY KEY,
+    orderid INTEGER REFERENCES orders(id),
+    productid INTEGER REFERENCES products(id),
+    quantity INTEGER NOT NULL DEFAULT 1
 ----
 ###  postman Collection link
 https://www.getpostman.com/collections/41553240e89532125841
