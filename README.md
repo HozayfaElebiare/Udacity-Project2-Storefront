@@ -4,11 +4,24 @@
 
     'npm install' to install the required packages.
 
-## DB Connection
+## DB Connection { Important }
 I used a free online database from Elephant sql
 
 ```
 postgres://mhwlwjuf:2s0DiANmcZOPz7Kz7Ta_JOjWM4ToDM3f@abul.db.elephantsql.com/mhwlwjuf
+```
+
+## .env File
+```
+POSTGRES_HOST=abul.db.elephantsql.com
+POSTGRES_DB=mhwlwjuf
+POSTGRES_Test_DB=mhwlwjuf
+POSTGRES_USER=mhwlwjuf
+POSTGRES_PASSWORD=2s0DiANmcZOPz7Kz7Ta_JOjWM4ToDM3f
+ENV=test
+SecretKey=mahmoud-elebiare-Udacity
+PasswodSalt=Mahmoud-Elebiare
+SaltRounds=10
 ```
 
 ## Ports
@@ -24,12 +37,10 @@ postgres://mhwlwjuf:2s0DiANmcZOPz7Kz7Ta_JOjWM4ToDM3f@abul.db.elephantsql.com/mhw
     'npm run start' to start express
 
 ## DB Migrate
-
     'db-migrate up' to perform migration. Please run this migrate command before accessing any endpoint
 
 ## Prepare env
 - I saved and added a `.env` file in the root directory and I kept all environment parameters becuase I am using free online postgres db provider 
-
 
 ## Set up commands
 

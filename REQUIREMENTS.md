@@ -2,12 +2,19 @@
 
  ## Note: Postman collection included 
 ---------
-
+###  postman Collection link
+https://www.getpostman.com/collections/41553240e89532125841
 ## API Endpoints
+
 
 #### Users
 - Register `/user/register` [POST] 
 - Login `/user/login` [POST] 
+
+
+#### Users Dashboard
+- Get All Users `/user/` [GET] [token required]
+- Get One User By id `/user/:id` [GET] [token required]
 
 
 #### Products
@@ -21,7 +28,7 @@
 #### Orders
 - Create New Order `/order/new` [POST] [open cart if no open exist][token required]
 - Get My Orders `/showmyorders/` [GET] [token required]
-- Add To Current Order `/order/:orderid/addproduct/:productid` [POST] [token required]
+- Add To Current Order `/addtocart` [POST] [token required]
 - Submit Current opened Order `/supmitorder/:id` [POST] [token required]
 - Get Order Details `/orderdetails/:id` [GET] [token required]
 
@@ -88,8 +95,7 @@ Table: *orderitems*
     productid INTEGER REFERENCES products(id),
     quantity INTEGER NOT NULL DEFAULT 1
 ----
-###  postman Collection link
-https://www.getpostman.com/collections/41553240e89532125841
+###  postman Collection code to import
 
 --------
 ```

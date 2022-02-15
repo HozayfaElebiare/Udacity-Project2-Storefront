@@ -8,12 +8,13 @@ const auth = (req: Request, res: any, next: NextFunction) => {
 
     try {
         const authorizationHeader: string = req.headers.authorization as string
-        const userID:number = parseInt(req.headers.userid as string) 
+        // const userID:number = parseInt(req.headers.userid as string) 
         const token = authorizationHeader.split(' ')[1]
-        const decoded:User = jwt.verify(token, process.env.SecretKey as string) as User
-        if(decoded.id !== userID) {
-            throw new Error('User id does not match!')
-        }
+        // const decoded:User = jwt.verify(token, process.env.SecretKey as string) as User
+        jwt.verify(token, process.env.SecretKey as string) as User
+        // if(decoded.id !== userID) {
+        //     throw new Error('User id does not match!')
+        // }
         next()
     } catch (err) {
         res.status(401)

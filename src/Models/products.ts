@@ -57,7 +57,7 @@ export class ProductModel {
       }
   }
 
-  async delete(id: string): Promise<Product> {
+  async delete(id: string): Promise<string> {
       try {
     const sql = 'DELETE FROM products WHERE id=($1)'
     // @ts-ignore
@@ -68,6 +68,8 @@ export class ProductModel {
     const product = result.rows[0]
 
     conn.release()
+
+    return 'product deleted: '+ id
 
     return product
       } catch (err) {

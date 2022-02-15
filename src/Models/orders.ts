@@ -57,8 +57,6 @@ export class OrderModel {
 
   async create(b: Order): Promise<Order> {
     try {
-      console.log(b)
-
       b.orderstatus = 'open';
       const sql = 'INSERT INTO orders (orderstatus, userid) VALUES( $1, $2) RETURNING *'
       // @ts-ignore

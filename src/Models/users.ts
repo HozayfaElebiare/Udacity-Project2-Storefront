@@ -44,11 +44,9 @@ export class userModel {
       conn.release()
       const same =  bcrypt.compareSync(user.userpassword, SelectedUser.userpassword )
       if (same == true) {
-        console.log('true')
         const token = jwt.sign(SelectedUser, process.env.SecretKey as string)
         return ["true",token,SelectedUser.id,"Fro successfull response Please add token to req.headers.authorization and add User.ID to req.headers.id per each upcoming requests."];
       } else {
-        console.log('false')
         return ['Authintication faild, no users exist']
       }
       // return 'Authintication faild, no users exist'
@@ -78,6 +76,36 @@ export class userModel {
       return false
     }
 
+  }
+
+
+  public async GetAll(): Promise<User[]> {
+    try {
+      const sql = 'select * from users '
+      // @ts-ignore
+      const conn = await client.connect()
+      const result = await conn.query(sql)
+      const SelectedUser = result.rows
+      conn.release()
+      return SelectedUser
+    } catch (err) {
+      throw new Error('Can not get all users')
+    }
+  }
+
+
+  public async GetOneUser(userid:number): Promise<User[]> {
+    try {
+      const sql = 'select * from users WHERE id=$1 '
+      // @ts-ignore
+      const conn = await client.connect()
+      const result = await conn.query(sql,[userid])
+      const SelectedUser = result.rows
+      conn.release()
+      return SelectedUser
+    } catch (err) {
+      throw new Error('Can not get all users')
+    }
   }
 
 
