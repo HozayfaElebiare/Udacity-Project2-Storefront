@@ -1,16 +1,16 @@
 {
     "dev": {
         "driver": "pg",
-        "host": "abul.db.elephantsql.com",
-        "database": "mhwlwjuf",
-        "user": "mhwlwjuf",
-        "password": "2s0DiANmcZOPz7Kz7Ta_JOjWM4ToDM3f"
+        "host": { "ENV": "POSTGRES_HOST" },
+        "database": { "ENV": "POSTGRES_DB" },
+        "user": { "ENV": "POSTGRES_USER" },
+        "password": { "ENV": "POSTGRES_PASSWORD" }
     },
     "test": {
         "driver": "pg",
-        "host": "abul.db.elephantsql.com",
-        "database": "mhwlwjuf",
-        "user": "mhwlwjuf",
-        "password": "2s0DiANmcZOPz7Kz7Ta_JOjWM4ToDM3f"
+        "host": { "ENV": "POSTGRES_HOST" },
+        "database": { "ENV": "POSTGRES_Test_DB" },
+        "user": { "ENV": "POSTGRES_USER" },
+        "password": { "ENV": "POSTGRES_PASSWORD" }
     }
 }
